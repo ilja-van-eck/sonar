@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function removeDuplicateScripts() {
     const scripts = document.querySelectorAll(
-      'script[src*="player.vimeo.com/api/player.js"]'
+      'script[src*="player.vimeo.com/api/player.js"]',
     );
     const srcSet = new Set();
 
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const videoPlayers = Array.from(
-    document.querySelectorAll(".plyr__video-embed")
+    document.querySelectorAll(".plyr__video-embed"),
   );
   const plyrInstancesMap = new Map();
 
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const img = target.querySelector(".hover-preview__img");
       const vidWrap = target.querySelector(".vid-wrap");
       const videoWrapper = target.querySelector(
-        ".plyr.plyr--full-ui.plyr--video.plyr--vimeo"
+        ".plyr.plyr--full-ui.plyr--video.plyr--vimeo",
       );
       const player = plyrInstancesMap.get(videoWrapper);
       hoverScaleZ++;
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
               player.play();
             },
           },
-          0
+          0,
         );
     }
 
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const img = target.querySelector(".hover-preview__img");
       const vidWrap = target.querySelector(".vid-wrap");
       const videoWrapper = target.querySelector(
-        ".plyr.plyr--full-ui.plyr--video.plyr--vimeo"
+        ".plyr.plyr--full-ui.plyr--video.plyr--vimeo",
       );
       const player = plyrInstancesMap.get(videoWrapper);
       const leaveTimeline = gsap.timeline({
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .to(
           img,
           { scaleX: 1.2, autoAlpha: 1, duration: 0.2, overwrite: true },
-          0
+          0,
         );
     }
     document.querySelectorAll("[data-hover-scale]").forEach((item) => {
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let icon = item.querySelector('[data-preview="icon"]');
       let gradient = item.querySelector('[data-preview="gradient"]');
       const videoWrapper = item.querySelector(
-        ".plyr.plyr--full-ui.plyr--video.plyr--vimeo"
+        ".plyr.plyr--full-ui.plyr--video.plyr--vimeo",
       );
       const player = plyrInstancesMap.get(videoWrapper);
 
@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
             icon,
             { scale: 0, rotate: -90 },
             { scale: 1, rotate: 0, ease: "expo.out" },
-            0
+            0,
           )
           .to(
             img,
@@ -143,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 player.play();
               },
             },
-            0
+            0,
           );
         largePreviewIn.play();
       });
@@ -168,44 +168,58 @@ document.addEventListener("DOMContentLoaded", () => {
                 player.volume = 1;
               },
             },
-            0
+            0,
           );
         largePreviewOut.play();
       });
     });
   };
 
-  if (screenSize >= 480) {
-    initVideoPreview();
-  }
-
   const initParallaxColumns = () => {
     document.querySelector(".three-col_item").classList.add("is--active");
     document.querySelectorAll(".three-col_item").forEach((item) => {
       item.addEventListener("mouseenter", () => {
         const bgImage = item.querySelector(".bg-img");
+        const videoWrapper = item.querySelector(
+          ".plyr.plyr--full-ui.plyr--video.plyr--vimeo",
+        );
+        const player = plyrInstancesMap.get(videoWrapper);
+        if (player) {
+          player.muted = true;
+          player.volume = 0;
+          player.play();
+        }
         gsap.to(bgImage, {
           opacity: 0,
           duration: 0.2,
           delay: 0.7,
-          onStart: () => {
-            const videoWrapper = item.querySelector(
-              ".plyr.plyr--full-ui.plyr--video.plyr--vimeo"
-            );
-            const player = plyrInstancesMap.get(videoWrapper);
-            if (player) {
-              player.muted = true;
-              player.volume = 0;
-              player.play();
-            }
-          },
         });
         document.querySelectorAll(".three-col_item").forEach((otherItem) => {
           otherItem.classList.remove("is--active");
         });
         item.classList.add("is--active");
       });
+      item.addEventListener("mouseleave", () => {
+        const videoWrapper = item.querySelector(
+          ".plyr.plyr--full-ui.plyr--video.plyr--vimeo",
+        );
+        const player = plyrInstancesMap.get(videoWrapper);
+        const bgImage = item.querySelector(".bg-img");
+
+        if (player && !player.paused) {
+          player.pause();
+        }
+        gsap.to(bgImage, {
+          opacity: 1,
+          duration: 0.1,
+          overwrite: true,
+        });
+      });
     });
   };
-  initParallaxColumns();
+
+  if (screenSize >= 480) {
+    initVideoPreview();
+    initParallaxColumns();
+  }
 });
