@@ -176,8 +176,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const initParallaxColumns = () => {
-    document.querySelector(".three-col_item").classList.add("is--active");
-    document.querySelectorAll(".three-col_item").forEach((item) => {
+    let colItems = document.querySelectorAll(".three-col_item");
+    if (colItems.length > 0) {
+    colItems[0].classList.add("is--active");
+    colItems.forEach((item) => {
       item.addEventListener("mouseenter", () => {
         const bgImage = item.querySelector(".bg-img");
         const videoWrapper = item.querySelector(
@@ -216,6 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
     });
+    }
   };
 
   if (screenSize >= 480) {
