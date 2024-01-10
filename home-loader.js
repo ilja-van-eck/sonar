@@ -2,10 +2,6 @@ CustomEase.create("load", "0.46, 0.03, 0, 1");
 
 lenis.stop();
 
-window.onbeforeunload = function () {
-  window.scrollTo(0, 0);
-};
-
 let animations = [];
 let animationElements = document.querySelectorAll("[data-loader-lottie]");
 
